@@ -11,10 +11,10 @@ import {
   View,
 } from 'react-native';
 import Toast from 'react-native-simple-toast';
-import {Colors, Dimens} from './Common/Constants'
-import {Strings} from './Common/Strings'
-import RecipeManagerApi from './Network/RecipeManagerApi'
-import CustomDialog from './Common/CustomDialog'
+import {Colors, Dimens} from '../Common/Constants'
+import {Strings} from '../Common/Strings'
+import RecipeManagerApi from '../Network/RecipeManagerApi'
+import CustomDialog from '../Common/CustomDialog'
 
 export default class App extends React.Component {
 
@@ -135,10 +135,8 @@ export default class App extends React.Component {
     return (
       <SafeAreaView style = {appStyle.container}>
         <StatusBar backgroundColor = {Colors.primaryColor} barStyle = 'light-content'/>
-        
-        <Image style={appStyle.logo} source={require('./Resources/splash_login_bg.png')}/>
+        <Image style={appStyle.logo} source={require('../Resources/splash_login_bg.png')}/>
         <Text style = {appStyle.title}> Recipe Manager</Text>
-       
         <View style = {appStyle.inputView} >
           <TextInput  
             style = {appStyle.inputText}
@@ -146,7 +144,6 @@ export default class App extends React.Component {
             placeholderTextColor = {Colors.primaryColor}
             onChangeText = {text => this.setState({email: text})}/>
         </View>
-        
         <View style = {appStyle.inputView} >
           <TextInput  
             secureTextEntry
@@ -155,15 +152,14 @@ export default class App extends React.Component {
             placeholderTextColor = {Colors.primaryColor}
             onChangeText = {text => this.setState({password: text})}/>
         </View>
+      
+        <TouchableOpacity style={appStyle.loginButton} onPress = {this.onLoginAction}>
+          <Text style = {appStyle.loginText}>Log in</Text>
+        </TouchableOpacity>
 
-        <View style = {{flexDirection: 'row'}}>
-          <TouchableOpacity style = {appStyle.loginButton} onPress = {this.onSignUpAction}>
-            <Text style = {appStyle.loginText}>Sign up</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={appStyle.loginButton} onPress = {this.onLoginAction}>
-            <Text style = {appStyle.loginText}>Log in</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity style = {appStyle.loginButton} onPress = {this.onSignUpAction}>
+          <Text style = {appStyle.loginText}>Sign up</Text>
+        </TouchableOpacity>
 
         <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
           acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
@@ -175,13 +171,14 @@ export default class App extends React.Component {
 
 const appStyle = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: Colors.white
   },
   logo: {
-    width: '60%',
-    height: '45%'
+    width: '50%',
+    height: '30%'
   },
   title: {
     fontWeight: 'bold',
@@ -190,7 +187,7 @@ const appStyle = StyleSheet.create({
     marginBottom: Dimens.small
   },
   inputView: {
-    width: '75%',
+    width: '80%',
     backgroundColor: Colors.white,
     height: Dimens.huge,
     marginBottom: Dimens.small,
@@ -204,15 +201,13 @@ const appStyle = StyleSheet.create({
     borderBottomWidth: 2
   },
   loginButton: {
-    width: '35%',
+    width: '80%',
     backgroundColor: Colors.primaryColor,
-    borderRadius: Dimens.small,
+    borderRadius: Dimens.big / 2,
     height: Dimens.big,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: Dimens.medium,
-    marginLeft: Dimens.small,
-    marginRight: Dimens.small
+    marginTop: Dimens.medium
   },
   loginText: {
     color: Colors.white,
