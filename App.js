@@ -175,13 +175,14 @@ export default class App extends React.Component {
 
 const appStyle = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: Colors.white
   },
   logo: {
-    width: '60%',
-    height: '45%'
+    marginTop: '20%',
+    width: '50%',
+    height: '30%'
   },
   title: {
     fontWeight: 'bold',

@@ -20,7 +20,7 @@ import {
 
 import RecipeManagerApi from './RecipeManagerApi'
 
-export default class App extends React.Component {
+export default class Home extends React.Component {
 
   constructor(props) {
     super(props)
@@ -57,6 +57,7 @@ export default class App extends React.Component {
 
   render() {
 
+/*
     return (
       <SafeAreaView> 
       {
@@ -65,6 +66,13 @@ export default class App extends React.Component {
       </SafeAreaView>
     
     );
+    */
+
+    return (
+      <SafeAreaView> 
+        <Text> Hello </Text>
+      </SafeAreaView>
+    )
 
   }
 
