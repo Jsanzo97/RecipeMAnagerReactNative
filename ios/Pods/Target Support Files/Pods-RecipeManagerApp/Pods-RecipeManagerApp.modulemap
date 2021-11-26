@@ -1,0 +1,6 @@
+module Pods_RecipeManagerApp {
+  umbrella header "Pods-RecipeManagerApp-umbrella.h"
+
+  export *
+  module * { export * }
+}
