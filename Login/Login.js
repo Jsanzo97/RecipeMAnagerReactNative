@@ -1,21 +1,23 @@
-import 'react-native-gesture-handler';
 import React from 'react';
 import type {Node} from 'react';
 import {
   SafeAreaView,
-  StatusBar,
   StyleSheet,
   Image,
   Text,
   TextInput,
   TouchableOpacity,
   View,
+  Dimensions
 } from 'react-native';
 import {Colors, Dimens} from '../Common/Constants'
 import {Strings} from '../Common/Strings'
 import RecipeManagerApi from '../Network/RecipeManagerApi'
 import CustomDialog from '../Common/CustomDialog'
 import {NavigationContainer} from '@react-navigation/native'
+
+const { height } = Dimensions.get('window')
+const imageHeight = (30 / 100) * height
 
 export default class Login extends React.Component {
 
@@ -31,6 +33,9 @@ export default class Login extends React.Component {
       cancelHandleAction: () => {}
     }
     this.recipeManagerApi = new RecipeManagerApi()
+    this.props.navigation.setOptions({
+      title: ''
+    })
   }
 
   onLoginAction = () => {
@@ -77,7 +82,7 @@ export default class Login extends React.Component {
         this.setState({
           showDialog: false
         })
-        // Navigate to home screen
+        this.props.navigation.navigate(Strings.tabBarNavigatorName)
         },
       () => {
         this.setState({
@@ -134,9 +139,8 @@ export default class Login extends React.Component {
   render() {
 
     return (
-      <SafeAreaView style = {appStyle.container}>
-        <StatusBar backgroundColor = {Colors.primaryColor} barStyle = 'light-content'/>
-        
+      <View style = {appStyle.container}>  
+
         <Image style={appStyle.logo} source={require('../Resources/splash_login_bg.png')}/>
         <Text style = {appStyle.title}> Recipe Manager</Text>
        
@@ -169,7 +173,7 @@ export default class Login extends React.Component {
         <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
           acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
   
-      </SafeAreaView>
+      </View>
     );
   }
 }
@@ -183,7 +187,7 @@ const appStyle = StyleSheet.create({
   logo: {
     marginTop: '20%',
     width: '50%',
-    height: '30%'
+    height: imageHeight
   },
   title: {
     fontWeight: 'bold',
@@ -214,7 +218,8 @@ const appStyle = StyleSheet.create({
     justifyContent: 'center',
     marginTop: Dimens.medium,
     marginLeft: Dimens.small,
-    marginRight: Dimens.small
+    marginRight: Dimens.small,
+    elevation: Dimens.tiny
   },
   loginText: {
     color: Colors.white,
