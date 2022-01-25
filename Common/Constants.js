@@ -12,7 +12,8 @@ export const Dimens = {
     medium: 16,
     big: 32,
     huge: 48,
-    tabBarIconSize: 24
+    tabBarIconSize: 24,
+    closeSessionFontsize: 18
 }
 
 export const Network = {

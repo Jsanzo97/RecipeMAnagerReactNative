@@ -17,7 +17,8 @@ import RecipeManagerApi from '../Network/RecipeManagerApi'
 import {Colors, Dimens, AsyncStorageKeys} from '../Common/Constants'
 import CustomDialog from '../Common/CustomDialog'
 import {Strings} from '../Common/Strings'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 export default class Home extends React.Component {
 
@@ -186,7 +187,6 @@ export default class Home extends React.Component {
                 }
             )
         } else {
-            console.log(this.username);
             this.recipeManagerApi.createNewRecipe(this.username, userRecipe)
                 .then(response => {
                     if (response.success) {
@@ -452,7 +452,7 @@ export default class Home extends React.Component {
 
     render() {
         return(
-            <View> 
+            <KeyboardAwareScrollView> 
                 {this.state.showNewIngredientForm ?
                     this.renderNewIngredientForm()
                 : 
@@ -460,7 +460,7 @@ export default class Home extends React.Component {
                 } 
                 <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
                     acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
-            </View>
+            </KeyboardAwareScrollView>
         )
     }
 }

@@ -8,14 +8,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Dimensions
+  Dimensions 
 } from 'react-native';
 import {Colors, Dimens, AsyncStorageKeys} from '../Common/Constants'
 import {Strings} from '../Common/Strings'
 import RecipeManagerApi from '../Network/RecipeManagerApi'
 import CustomDialog from '../Common/CustomDialog'
 import {NavigationContainer} from '@react-navigation/native'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const { height } = Dimensions.get('window')
 const imageHeight = (30 / 100) * height
@@ -36,6 +37,12 @@ export default class Login extends React.Component {
     this.recipeManagerApi = new RecipeManagerApi()
     this.props.navigation.setOptions({
       title: ''
+    })
+
+    AsyncStorage.getItem(AsyncStorageKeys.usernameValue).then( (value) => { 
+      if (value && value != '') {
+        this.props.navigation.replace(Strings.tabBarNavigatorName)
+      }
     })
   }
 
@@ -84,7 +91,7 @@ export default class Login extends React.Component {
           showDialog: false
         })
         AsyncStorage.setItem(AsyncStorageKeys.usernameValue, this.state.username)
-        this.props.navigation.navigate(Strings.tabBarNavigatorName)
+        this.props.navigation.replace(Strings.tabBarNavigatorName)
         },
       () => {
         this.setState({
@@ -141,48 +148,50 @@ export default class Login extends React.Component {
   render() {
 
     return (
-      <View style = {appStyle.container}>  
+      <KeyboardAwareScrollView style = {{backgroundColor: Colors.white}}>
+        <View style = {appStyle.container}>  
 
-        <Image style={appStyle.logo} source={require('../Resources/splash_login_bg.png')}/>
-        <Text style = {appStyle.title}> Recipe Manager</Text>
-       
-        <View style = {appStyle.inputView} >
-          <TextInput  
-            style = {appStyle.inputText}
-            placeholder = 'Username' 
-            placeholderTextColor = {Colors.primaryColor}
-            onChangeText = {text => this.setState({username: text})}/>
-        </View>
+          <Image style={appStyle.logo} source={require('../Resources/splash_login_bg.png')}/>
+          <Text style = {appStyle.title}> Recipe Manager</Text>
         
-        <View style = {appStyle.inputView} >
-          <TextInput  
-            secureTextEntry
-            style = {appStyle.inputText}
-            placeholder = 'Password' 
-            placeholderTextColor = {Colors.primaryColor}
-            onChangeText = {text => this.setState({password: text})}/>
-        </View>
+          <View style = {appStyle.inputView} >
+            <TextInput  
+              style = {appStyle.inputText}
+              placeholder = 'Username' 
+              placeholderTextColor = {Colors.primaryColor}
+              onChangeText = {text => this.setState({username: text})}/>
+          </View>
+          
+          <View style = {appStyle.inputView} >
+            <TextInput  
+              secureTextEntry
+              style = {appStyle.inputText}
+              placeholder = 'Password' 
+              placeholderTextColor = {Colors.primaryColor}
+              onChangeText = {text => this.setState({password: text})}/>
+          </View>
 
-        <View style = {{flexDirection: 'row'}}>
-          <TouchableOpacity style = {appStyle.loginButton} onPress = {this.onSignUpAction}>
-            <Text style = {appStyle.loginText}>Sign up</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={appStyle.loginButton} onPress = {this.onLoginAction}>
-            <Text style = {appStyle.loginText}>Log in</Text>
-          </TouchableOpacity>
-        </View>
+          <View style = {{flexDirection: 'row'}}>
+            <TouchableOpacity style = {appStyle.loginButton} onPress = {this.onSignUpAction}>
+              <Text style = {appStyle.loginText}>Sign up</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={appStyle.loginButton} onPress = {this.onLoginAction}>
+              <Text style = {appStyle.loginText}>Log in</Text>
+            </TouchableOpacity>
+          </View>
 
-        <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
-          acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
-  
-      </View>
+          <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
+            acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
+    
+        </View>
+      </KeyboardAwareScrollView>
     );
   }
 }
 
 const appStyle = StyleSheet.create({
   container: {
-    flex: 1,
+    height: '100%',
     alignItems: 'center',
     backgroundColor: Colors.white
   },
@@ -221,6 +230,7 @@ const appStyle = StyleSheet.create({
     marginTop: Dimens.medium,
     marginLeft: Dimens.small,
     marginRight: Dimens.small,
+    marginBottom: Dimens.medium,
     elevation: Dimens.tiny
   },
   loginText: {

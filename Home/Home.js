@@ -51,21 +51,19 @@ export default class Home extends React.Component {
   }
 
   removeRecipe = (recipe) => {
-    console.log(recipe);
     this.showMessage(
       Strings.confirmation,
       Strings.confirmRemoveRecipe,
       () => {
-          this.setState({
-              showDialog: false,
-          })
           this.recipeManagerApi.removeRecipe(this.username, recipe.name).then(response => {
-            console.log(response);
             if (response.success) {
                 this.onSuccessRemoveRecipe(response.successMessage)
             } else {
                 this.onErrorRemoveRecipe(response.errorMessage)
             }
+            this.setState({
+              showDialog: false
+            })
           })
       },
       () => {
@@ -139,12 +137,12 @@ export default class Home extends React.Component {
         </View>
         <View style = {{flexDirection: 'row', marginTop: Dimens.small, marginBottom: Dimens.small}}>
           <View style = {{flex: 1}}>
-            <TouchableOpacity style={appStyle.cardViewButton} onPress = {() => this.showRecipeDetails(item)}>
+            <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.showRecipeDetails(item)}>
               <Text style = {{color: Colors.primaryColor}}>Details</Text>
             </TouchableOpacity>
           </View>
           <View style = {{flex: 1}}>
-            <TouchableOpacity style={appStyle.cardViewButton} onPress = {() => this.removeRecipe(item)}>
+            <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.removeRecipe(item)}>
               <Text style = {{color: Colors.primaryColor}}>Delete</Text>
             </TouchableOpacity>
           </View>
@@ -218,12 +216,21 @@ export default class Home extends React.Component {
   }
 
   renderBookRecipe = () => {
-    return (
-      <FlatList
-        data = {this.state.recipes}
-        renderItem = {this.renderRecipe}
-      />
-    )
+    if (this.state.recipes && this.state.recipes.length > 0) {
+      return (
+        <FlatList
+          data = {this.state.recipes}
+          renderItem = {this.renderRecipe}
+        />
+      )
+    } else {
+      return (
+        <View style = {{height: '100%', alignItems: 'center', justifyContent: 'center'}}>
+              <Text style = {{color: Colors.primaryColor}}>There are no recipes created yet, press the new recipe button on the bottom left to create the first one! </Text>
+        </View>
+        
+      )
+    }
   }
 
   render() {

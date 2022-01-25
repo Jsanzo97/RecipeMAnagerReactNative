@@ -18,8 +18,13 @@ const Tab = createBottomTabNavigator()
 const TabNavigatorComponent = () => {
     return (
       <Tab.Navigator 
-        screenOptions = {{ headerShown: false }}
-        initialRouteName = {Strings.homeScreenName}>
+        screenOptions = {{ 
+          headerShown: false, 
+          tabBarHideOnKeyboard: true,
+          tabBarStyle: [{ display: "flex" }, null]
+        }}
+        initialRouteName = {Strings.homeScreenName}
+        backBehaviour = 'none'>
         <Tab.Screen
           name = {Strings.newRecipeScreenName}
           component = {NewRecipe}  
