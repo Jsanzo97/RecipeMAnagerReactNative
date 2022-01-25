@@ -24,6 +24,11 @@ export const Network = {
     getCategoriesAvailables: '/recipes/categories',
     getSubcategoriesAvailables: '/recipes/subcategories',
     getIngredientTypesAvailables: '/recipes/ingredientTypes',
-    createNewRecipe: '/recipe'
+    createNewRecipe: '/recipe',
+    removeRecipe: '/recipe/withName'
+}
+
+export const AsyncStorageKeys = {
+    usernameValue: 'username_value'
 }
 

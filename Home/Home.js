@@ -13,8 +13,10 @@ import {
 } from 'react-native';
 
 import RecipeManagerApi from '../Network/RecipeManagerApi'
-import {Colors, Dimens} from '../Common/Constants'
-
+import {Colors, Dimens, AsyncStorageKeys} from '../Common/Constants'
+import CustomDialog from '../Common/CustomDialog'
+import {Strings} from '../Common/Strings'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Home extends React.Component {
 
@@ -23,8 +25,16 @@ export default class Home extends React.Component {
     this.state = {
       recipes: [],
       showDetails: false,
-      recipeSelected: null
+      recipeSelected: null,
+      showDialog: false,
+      titleDialog: '',
+      messageDialog: '',
+      acceptHandleAction: () => {},
+      cancelHandleAction: () => {}
     }
+    this.recipeManagerApi = new RecipeManagerApi() 
+    
+    AsyncStorage.getItem(AsyncStorageKeys.usernameValue).then( (value) => { this.username = value } )
   }
 
   showRecipeDetails = (recipe) => {
@@ -38,6 +48,76 @@ export default class Home extends React.Component {
     this.setState({
       showDetails: false
     })
+  }
+
+  removeRecipe = (recipe) => {
+    console.log(recipe);
+    this.showMessage(
+      Strings.confirmation,
+      Strings.confirmRemoveRecipe,
+      () => {
+          this.setState({
+              showDialog: false,
+          })
+          this.recipeManagerApi.removeRecipe(this.username, recipe.name).then(response => {
+            console.log(response);
+            if (response.success) {
+                this.onSuccessRemoveRecipe(response.successMessage)
+            } else {
+                this.onErrorRemoveRecipe(response.errorMessage)
+            }
+          })
+      },
+      () => {
+          this.setState({
+              showDialog: false
+          })
+      }
+    )
+  }
+
+  onSuccessRemoveRecipe(message) {
+    this.showMessage(
+        Strings.sucessOperation,
+        message,
+        () => {
+            this.setState({
+                showDialog: false
+            })
+        },
+        () => {
+            this.setState({
+                showDialog: false
+            })
+        }
+    )
+  }
+
+  onErrorRemoveRecipe(message) {
+    this.showMessage(
+      Strings.sucessOperation,
+      message,
+      () => {
+          this.setState({
+              showDialog: false
+          })
+      },
+      () => {
+          this.setState({
+              showDialog: false
+          })
+      }
+    )
+  }
+
+  showMessage = (title, message, acceptHandleAction, cancelHandleAction) => {
+      this.setState({
+          showDialog: true,
+          titleDialog: title,
+          messageDialog: message,
+          acceptHandleAction: acceptHandleAction,
+          cancelHandleAction: cancelHandleAction
+      })
   }
 
   renderRecipe = ({ item }) => {
@@ -64,7 +144,7 @@ export default class Home extends React.Component {
             </TouchableOpacity>
           </View>
           <View style = {{flex: 1}}>
-            <TouchableOpacity style={appStyle.cardViewButton}>
+            <TouchableOpacity style={appStyle.cardViewButton} onPress = {() => this.removeRecipe(item)}>
               <Text style = {{color: Colors.primaryColor}}>Delete</Text>
             </TouchableOpacity>
           </View>
@@ -147,8 +227,7 @@ export default class Home extends React.Component {
   }
 
   render() {
-    let apiClient = new RecipeManagerApi() 
-    apiClient.getRecipesFromUser('user').then(result => {
+    this.recipeManagerApi.getRecipesFromUser(this.username).then(result => {
       this.setState({
         recipes: result.recipesResult
       })
@@ -161,6 +240,8 @@ export default class Home extends React.Component {
           : 
             this.renderBookRecipe()
         } 
+        <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
+          acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
       </View>
     )
   }

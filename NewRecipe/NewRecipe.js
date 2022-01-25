@@ -14,9 +14,10 @@ import {
 
 import {Picker} from '@react-native-picker/picker'
 import RecipeManagerApi from '../Network/RecipeManagerApi'
-import {Colors, Dimens} from '../Common/Constants'
+import {Colors, Dimens, AsyncStorageKeys} from '../Common/Constants'
 import CustomDialog from '../Common/CustomDialog'
 import {Strings} from '../Common/Strings'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default class Home extends React.Component {
 
@@ -30,14 +31,14 @@ export default class Home extends React.Component {
             showNewIngredientForm: false,
             recipeName: "",
             recipeCategory: "STARTER",
-            recipeDuration: 0.0,
+            recipeDuration: "",
             recipeDifficult: "EASY",
             recipeIngredients: [],
             recipeDescription: "",
             recipeSubcategory: "COLD",
             ingredientName: "",
             ingredientType: "MEAT",
-            ingredientCalories: 0.0,
+            ingredientCalories: "",
             showDialog: false,
             titleDialog: '',
             messageDialog: '',
@@ -45,6 +46,7 @@ export default class Home extends React.Component {
             cancelHandleAction: () => {}
         }
         this.recipeManagerApi = new RecipeManagerApi()
+        AsyncStorage.getItem(AsyncStorageKeys.usernameValue).then( (value) => { this.username = value } )
     }
 
     componentDidMount() {
@@ -79,7 +81,7 @@ export default class Home extends React.Component {
         this.setState({
             recipeName: "",
             recipeCategory: "STARTER",
-            recipeDuration: 0.0,
+            recipeDuration: "",
             recipeDifficult: "EASY",
             recipeIngredients: [],
             recipeDescription: "",
@@ -93,12 +95,12 @@ export default class Home extends React.Component {
         this.setState({
             ingredientName: "",
             ingredientType: "MEAT",
-            ingredientCalories: 0.0
+            ingredientCalories: ""
         })
     }
 
     createNewIngredient = () => {
-        if (this.state.ingredientName != "" && this.state.ingredientType != "" && this.state.ingredientCalories > 0.0) {
+        if (this.checkIngredientValidFields()) {
             if (!this.state.recipeIngredients.some(item => this.state.ingredientName === item.name)) {
                 let ingredients = this.state.recipeIngredients
                 ingredients.push({
@@ -161,14 +163,14 @@ export default class Home extends React.Component {
         let userRecipe = {
             name: this.state.recipeName,
             description: this.state.recipeDescription,
-            durationInHours: this.state.recipeDuration,
+            durationInHours: parseFloat(this.state.recipeDuration.replace(",", ".")),
             difficult: this.state.recipeDifficult,
             ingredients: this.state.recipeIngredients,
             category: this.state.recipeCategory,
             subcategories: [{value: this.state.recipeSubcategory}]
         }
 
-        if (userRecipe.name == "" || userRecipe.description == "" || userRecipe.durationInHours <= 0 || userRecipe.difficult == "" || userRecipe.ingredients.length == 0 || userRecipe.category == "" || userRecipe.subcategories.length == 0) {
+        if (this.checkRecipeInvalidFields(userRecipe)) {
             this.showMessage(
                 Strings.errorOperation,
                 Strings.newRecipeEmptyFields,
@@ -184,18 +186,60 @@ export default class Home extends React.Component {
                 }
             )
         } else {
-            this.recipeManagerApi.createNewRecipe('user', userRecipe)
+            console.log(this.username);
+            this.recipeManagerApi.createNewRecipe(this.username, userRecipe)
                 .then(response => {
                     if (response.success) {
-                        console.log(response.successMessage)
-                        //this.onSuccessSignUpOperation(response.successMessage)
+                        this.onSuccessCreateNewRecipe(response.successMessage)
                     } else {
-                        console.log(response.errorMessage)
-                        //this.onErrorOperation(response.errorMessage)
+                        this.onErrorCreateNewRecipe(response.errorMessage)
                     }
                 }
             )
         }        
+    }
+
+    checkRecipeInvalidFields(userRecipe) {
+        return userRecipe.name == "" || userRecipe.description == "" || userRecipe.durationInHours == "" || parseFloat(userRecipe.durationInHours) <= 0 || userRecipe.difficult == "" || userRecipe.ingredients.length == 0 || userRecipe.category == "" || userRecipe.subcategories.length == 0
+    }
+
+    checkIngredientValidFields() {
+        return this.state.ingredientName != "" && this.state.ingredientType != "" && this.state.ingredientCalories > 0.0
+    }
+
+    onSuccessCreateNewRecipe(message) {
+        this.showMessage(
+            Strings.sucessOperation,
+            message,
+            () => {
+                this.setState({
+                    showDialog: false
+                })
+            },
+            () => {
+                this.setState({
+                    showDialog: false
+                })
+            }
+        )
+        this.clearNewRecipeForm()
+    }
+
+    onErrorCreateNewRecipe(message) {
+        this.showMessage(
+            Strings.errorOperation,
+            message,
+            () => {
+                this.setState({
+                    showDialog: false
+                })
+            },
+            () => {
+                this.setState({
+                    showDialog: false
+                })
+            }
+        )
     }
 
     showMessage = (title, message, acceptHandleAction, cancelHandleAction) => {
@@ -249,7 +293,8 @@ export default class Home extends React.Component {
                         <TextInput  
                             ref= {recipeNameInput => { this.recipeNameInput = recipeNameInput }} 
                             style = {appStyle.inputText}
-                            placeholder = 'Recipe name' 
+                            placeholder = 'Recipe name'
+                            value = {this.state.recipeName} 
                             placeholderTextColor = {Colors.primaryColor}
                             onChangeText = {text => this.setState({recipeName: text})}
                         />
@@ -275,9 +320,10 @@ export default class Home extends React.Component {
                             ref= {recipeDurationInput => { this.recipeDurationInput = recipeDurationInput }} 
                             style = {appStyle.inputText}
                             keyboardType='numeric'
-                            placeholder = 'Duration' 
+                            placeholder = 'Duration'
+                            value = {this.state.recipeDuration} 
                             placeholderTextColor = {Colors.primaryColor}
-                            onChangeText = {text => this.setState({recipeDuration: parseFloat(text)})}
+                            onChangeText = {text => this.setState({recipeDuration: text})}
                         />
                     </View>
                 </View>
@@ -324,7 +370,8 @@ export default class Home extends React.Component {
                         <TextInput  
                             ref= {recipeDescriptionInput => { this.recipeDescriptionInput = recipeDescriptionInput }} 
                             style = {appStyle.inputText}
-                            placeholder = 'Description' 
+                            placeholder = 'Description'
+                            value = {this.state.recipeDescription}
                             placeholderTextColor = {Colors.primaryColor}
                             onChangeText = {text => this.setState({recipeDescription: text})}
                         />
@@ -383,7 +430,7 @@ export default class Home extends React.Component {
                             keyboardType='numeric'
                             placeholder = 'Calories' 
                             placeholderTextColor = {Colors.primaryColor}
-                            onChangeText = {text => this.setState({ingredientCalories: parseFloat(text)})}
+                            onChangeText = {text => this.setState({ingredientCalories: parseFloat(text.replace(",", "."))})}
                         />
                     </View>
                 </View>

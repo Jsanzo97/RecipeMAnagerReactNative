@@ -111,15 +111,6 @@ export default class RecipeManagerApi
 
   createNewRecipe(user, recipe) {
     let url = `${Network.baseURl}${Network.createNewRecipe}?username=${user}`;
-    console.log(JSON.stringify({
-        name: recipe.name,
-        description: recipe.description,
-        durationInHours: recipe.durationInHours,
-        difficult: recipe.difficult,
-        ingredients: recipe.ingredients,
-        category: recipe.category,
-        subcategories: recipe.subcategories
-      }));
     return fetch(`${url}`, {
       method: 'POST',
       headers: {
@@ -144,7 +135,26 @@ export default class RecipeManagerApi
       errorMessage: processedResponse.data.error_description
     }))
     .catch((error) => console.log(` ${error}`))
+  }
 
+  removeRecipe(user, recipeName) {
+    let url = `${Network.baseURl}${Network.removeRecipe}?name=${recipeName}&username=${user}`
+    return fetch(`${url}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify()
+    })
+    .then(response => this.processResponse(response))
+    .then(processedResponse => ({
+      success: processedResponse.status,
+      successMessage: processedResponse.data.message,
+      error: !processedResponse.status,
+      errorMessage: processedResponse.data.error_description
+    }))
+    .catch((error) => console.log(` ${error}`))
   }
 
   processResponse(response) {

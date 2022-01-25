@@ -10,11 +10,12 @@ import {
   View,
   Dimensions
 } from 'react-native';
-import {Colors, Dimens} from '../Common/Constants'
+import {Colors, Dimens, AsyncStorageKeys} from '../Common/Constants'
 import {Strings} from '../Common/Strings'
 import RecipeManagerApi from '../Network/RecipeManagerApi'
 import CustomDialog from '../Common/CustomDialog'
 import {NavigationContainer} from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { height } = Dimensions.get('window')
 const imageHeight = (30 / 100) * height
@@ -24,7 +25,7 @@ export default class Login extends React.Component {
   constructor(props) {
    super(props)
     this.state = {
-      email: '',
+      username: '',
       password: '',
       showDialog: false,
       titleDialog: '',
@@ -40,7 +41,7 @@ export default class Login extends React.Component {
 
   onLoginAction = () => {
     if(this.checkValidFields()) {
-      this.recipeManagerApi.login(this.state.email, this.state.password)
+      this.recipeManagerApi.login(this.state.username, this.state.password)
         .then(response => {
             if (response.success) {
               this.onSuccessLoginOperation(response.successMessage)
@@ -56,7 +57,7 @@ export default class Login extends React.Component {
 
   onSignUpAction = () => {
     if(this.checkValidFields()) {
-      this.recipeManagerApi.signUp(this.state.email, this.state.password)
+      this.recipeManagerApi.signUp(this.state.username, this.state.password)
         .then(response => {
           if (response.success) {
             this.onSuccessSignUpOperation(response.successMessage)
@@ -71,7 +72,7 @@ export default class Login extends React.Component {
   }
 
   checkValidFields = () => {
-    return this.state.email != '' && this.state.password != ''
+    return this.state.username != '' && this.state.password != ''
   }
 
   onSuccessLoginOperation = (message) => {
@@ -82,6 +83,7 @@ export default class Login extends React.Component {
         this.setState({
           showDialog: false
         })
+        AsyncStorage.setItem(AsyncStorageKeys.usernameValue, this.state.username)
         this.props.navigation.navigate(Strings.tabBarNavigatorName)
         },
       () => {
@@ -147,9 +149,9 @@ export default class Login extends React.Component {
         <View style = {appStyle.inputView} >
           <TextInput  
             style = {appStyle.inputText}
-            placeholder = 'Email' 
+            placeholder = 'Username' 
             placeholderTextColor = {Colors.primaryColor}
-            onChangeText = {text => this.setState({email: text})}/>
+            onChangeText = {text => this.setState({username: text})}/>
         </View>
         
         <View style = {appStyle.inputView} >
