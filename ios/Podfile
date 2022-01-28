@@ -12,8 +12,6 @@ target 'RecipeManagerApp' do
     :hermes_enabled => false
   )
 
-  pod 'react-native-simple-toast', :path => '../node_modules/react-native-simple-toast'
-
   target 'RecipeManagerAppTests' do
     inherit! :complete
     # Pods for testing

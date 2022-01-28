@@ -1,12 +1,9 @@
 import React from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
   ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   TouchableOpacity,
   FlatList
@@ -241,7 +238,7 @@ export default class Home extends React.Component {
     })
 
     return (
-      <View> 
+      <SafeAreaView> 
         {this.state.showDetails ?
             this.renderDetails()
           : 
@@ -249,7 +246,7 @@ export default class Home extends React.Component {
         } 
         <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
           acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
-      </View>
+      </SafeAreaView>
     )
   }
 }

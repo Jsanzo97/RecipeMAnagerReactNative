@@ -1,19 +1,13 @@
 import React from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   TouchableOpacity,
-  FlatList,
   ImageBackground
 } from 'react-native';
 
-import RecipeManagerApi from '../Network/RecipeManagerApi'
 import {Colors, Dimens, AsyncStorageKeys} from '../Common/Constants'
 import {Strings} from '../Common/Strings'
 import AsyncStorage from '@react-native-async-storage/async-storage'
@@ -27,7 +21,7 @@ export default class CloseSession extends React.Component {
 
     render() {
         return (
-            <View style = {appStyle.backgroundContainer}>
+            <SafeAreaView style = {appStyle.backgroundContainer}>
                 <ImageBackground 
                     source = {require('../Resources/splash_login_bg.png')} 
                     style = {appStyle.closeSessionBackground} 
@@ -39,7 +33,7 @@ export default class CloseSession extends React.Component {
                         <Text style = {{color: Colors.white}}>Close session</Text>
                     </TouchableOpacity>
                 </ImageBackground>
-            </View>
+            </SafeAreaView>
         )
     }
 }

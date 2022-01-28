@@ -1,15 +1,13 @@
 import React from 'react';
-import type {Node} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  StatusBar,
   StyleSheet,
   Text,
-  useColorScheme,
   View,
   TouchableOpacity,
-  TextInput
+  TextInput,
+  Platform,
+  ActionSheetIOS
 } from 'react-native';
 
 import {Picker} from '@react-native-picker/picker'
@@ -252,6 +250,42 @@ export default class Home extends React.Component {
         })
     }
 
+    showIosCategoryPicker = (categoryList) => {
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: categoryList.map((element) => element.category)
+        },
+        buttonIndex => {
+            this.setState({recipeCategory: categoryList[buttonIndex].category})
+        })
+    }
+
+    showIosSubcategoryPicker = (subcategoryList) => {
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: subcategoryList.map((element) => element.value)
+        },
+        buttonIndex => {
+            this.setState({recipeSubcategory: subcategoryList[buttonIndex].value})
+        })
+    }
+
+    showIosIngredientTypePicker = (ingredientTypeList) => {
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: ingredientTypeList.map((element) => element.type)
+        },
+        buttonIndex => {
+            this.setState({ingredientType: ingredientTypeList[buttonIndex].type})
+        })
+    }
+
+    showIosDifficultPicker = (difficultList) => {
+        ActionSheetIOS.showActionSheetWithOptions({
+            options: difficultList.map((element) => element.difficult)
+        },
+        buttonIndex => {
+            this.setState({recipeDifficult: difficultList[buttonIndex].difficult})
+        })
+    }
+
     renderCategoryPickerItems = (categories) => {
         return categories.map((item, index) =>
             <Picker.Item style = {appStyle.pickerItemStyle} key = {index} label = {item.category} value = {item.category} />
@@ -288,34 +322,54 @@ export default class Home extends React.Component {
         return(
             <View style = {appStyle.cardView}> 
                 <View style = {{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style = {appStyle.cardViewText}>Name: </Text>
                     <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Name: </Text>
+                        </View>
+                    </View>
+                    <View style = {{flex: 2}}>
                         <TextInput  
                             ref= {recipeNameInput => { this.recipeNameInput = recipeNameInput }} 
                             style = {appStyle.inputText}
                             placeholder = 'Recipe name'
                             value = {this.state.recipeName} 
-                            placeholderTextColor = {Colors.primaryColor}
+                            placeholderTePxtColor = {Colors.primaryColor}
                             onChangeText = {text => this.setState({recipeName: text})}
                         />
                     </View>
                 </View>                        
-                <View style = {{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style = {appStyle.cardViewText}>Category: </Text>
-                    <View style = {{flex: 1}}>                                
-                        <Picker
-                            style = {appStyle.pickerStyle}
-                            mode = 'dropdown'
-                            dropdownIconColor = {Colors.white}
-                            selectedValue = {this.state.recipeCategory}
-                            onValueChange = {(itemValue, itemIndex) => this.setState({recipeCategory: itemValue})}>
-                            {this.renderCategoryPickerItems(this.state.categoriesAvailables)}
-                        </Picker>
+                <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
+                    <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Category: </Text>
+                        </View>
+                    </View>
+                    <View style = {{flex: 1}}>   
+                        {
+                                Platform.OS == "ios" ? 
+                                    <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.showIosCategoryPicker(this.state.categoriesAvailables)}>
+                                        <Text style = {{color: Colors.primaryColor}}>{this.state.recipeCategory}</Text>
+                                    </TouchableOpacity>
+                            :
+                                <Picker
+                                    style = {appStyle.pickerStyle}
+                                    mode = 'dropdown'
+                                    dropdownIconColor = {Colors.white}
+                                    selectedValue = {this.state.recipeCategory}
+                                    onValueChange = {(itemValue, itemIndex) => this.setState({recipeCategory: itemValue})}>
+                                    {this.renderCategoryPickerItems(this.state.categoriesAvailables)}
+                                </Picker>
+                        }                             
+                        
                     </View>
                 </View>
                 <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
-                    <Text style = {appStyle.cardViewText}>Duration in hours: </Text>
-                    <View style = {{flex: 1}}>                                
+                    <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Duration in hours: </Text>
+                        </View>
+                    </View>
+                    <View style = {{flex: 2}}>                                
                         <TextInput  
                             ref= {recipeDurationInput => { this.recipeDurationInput = recipeDurationInput }} 
                             style = {appStyle.inputText}
@@ -327,35 +381,59 @@ export default class Home extends React.Component {
                         />
                     </View>
                 </View>
-                <View style = {{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style = {appStyle.cardViewText}>Difficult: </Text>
-                    <View style = {{flex: 1}}>                                
-                        <Picker
-                            style = {appStyle.pickerStyle}
-                            mode = 'dropdown'
-                            dropdownIconColor = {Colors.white}
-                            selectedValue = {this.state.recipeDifficult}
-                            onValueChange = {(itemValue, itemIndex) => this.setState({recipeDifficult: itemValue})}>
-                            {this.renderDifficultiesPickerItems(this.state.difficultiesAvailables)}
-                        </Picker>
+                <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
+                    <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Difficult: </Text>
+                        </View>
                     </View>
-                </View>
-                <View style = {{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style = {appStyle.cardViewText}>Subcategory: </Text>
-                    <View style = {{flex: 1}}>                                
-                        <Picker
-                            style = {appStyle.pickerStyle}
-                            mode = 'dropdown'
-                            dropdownIconColor = {Colors.white}
-                            selectedValue = {this.state.recipeSubcategory}
-                            onValueChange = {(itemValue, itemIndex) => this.setState({recipeSubcategory: itemValue})}>
-                            {this.renderSubcategoryPickerItems(this.state.subcategoriesAvailables)}
-                        </Picker>
+                    <View style = {{flex: 1}}>   
+                    {
+                            Platform.OS == "ios" ? 
+                                <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.showIosDifficultPicker(this.state.difficultiesAvailables)}>
+                                    <Text style = {{color: Colors.primaryColor}}>{this.state.recipeDifficult}</Text>
+                                </TouchableOpacity>
+                        :                             
+                            <Picker
+                                style = {appStyle.pickerStyle}
+                                mode = 'dropdown'
+                                dropdownIconColor = {Colors.white}
+                                selectedValue = {this.state.recipeDifficult}
+                                onValueChange = {(itemValue, itemIndex) => this.setState({recipeDifficult: itemValue})}>
+                                {this.renderDifficultiesPickerItems(this.state.difficultiesAvailables)}
+                            </Picker>
+                    }
                     </View>
                 </View>
                 <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
-                <View style = {{flex: 1}}>
-                    <Text style = {appStyle.cardViewText}>Ingredients: </Text> 
+                    <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Subcategory: </Text>
+                        </View>
+                    </View>
+                    <View style = {{flex: 1}}>  
+                        {
+                                Platform.OS == "ios" ? 
+                                    <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.showIosSubcategoryPicker(this.state.subcategoriesAvailables)}>
+                                        <Text style = {{color: Colors.primaryColor}}>{this.state.recipeSubcategory}</Text>
+                                    </TouchableOpacity>
+                            :                              
+                                <Picker
+                                    style = {appStyle.pickerStyle}
+                                    mode = 'dropdown'
+                                    dropdownIconColor = {Colors.white}
+                                    selectedValue = {this.state.recipeSubcategory}
+                                    onValueChange = {(itemValue, itemIndex) => this.setState({recipeSubcategory: itemValue})}>
+                                    {this.renderSubcategoryPickerItems(this.state.subcategoriesAvailables)}
+                                </Picker>
+                        }
+                        </View>
+                </View>
+                <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
+                    <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Ingredients: </Text> 
+                        </View>
                     </View>
                     <View style = {{flex: 1, marginLeft: Dimens.small}}>
                         <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.showNewIngredientForm()}>
@@ -364,9 +442,13 @@ export default class Home extends React.Component {
                     </View>
                 </View>
                 {this.renderIngredients(this.state.recipeIngredients)}
-                <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.big}}>
-                    <Text style = {appStyle.cardViewText}>Description: </Text>
-                    <View style = {{flex: 1}}>                                
+                <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
+                    <View style = {{flex: 1}}>
+                        <View style = {appStyle.cardViewTextContainer}>
+                            <Text style = {appStyle.cardViewText}>Description: </Text>
+                        </View>
+                    </View>
+                    <View style = {{flex: 2}}>                                
                         <TextInput  
                             ref= {recipeDescriptionInput => { this.recipeDescriptionInput = recipeDescriptionInput }} 
                             style = {appStyle.inputText}
@@ -397,8 +479,10 @@ export default class Home extends React.Component {
         return(
             <View style = {appStyle.cardView}> 
                 <View style = {{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style = {appStyle.cardViewText}>Name: </Text>
                     <View style = {{flex: 1}}>
+                        <Text style = {appStyle.cardViewText}>Name: </Text>
+                    </View>
+                    <View style = {{flex: 2}}>
                         <TextInput 
                             ref= {ingredientNameInput => { this.ingredientNameInput = ingredientNameInput }} 
                             style = {appStyle.inputText}
@@ -409,21 +493,33 @@ export default class Home extends React.Component {
                     </View>
                 </View>                        
                 <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
-                    <Text style = {appStyle.cardViewText}>Type: </Text>
-                    <View style = {{flex: 1}}>                                
-                        <Picker
-                            style = {appStyle.pickerStyle}
-                            mode = 'dropdown'
-                            dropdownIconColor = {Colors.white}
-                            selectedValue = {this.state.ingredientType}
-                            onValueChange = {(itemValue, itemIndex) => this.setState({ingredientType: itemValue})}>
-                            {this.renderIngredientTypesPickerItems(this.state.ingredientTypesAvailables)}
-                        </Picker>
+                    <View style = {{flex: 1}}>
+                        <Text style = {appStyle.cardViewText}>Type: </Text>
+                    </View>
+                    <View style = {{flex: 1}}>         
+                        {
+                                Platform.OS == "ios" ? 
+                                    <TouchableOpacity style = {appStyle.cardViewButton} onPress = {() => this.showIosIngredientTypePicker(this.state.ingredientTypesAvailables)}>
+                                        <Text style = {{color: Colors.primaryColor}}>{this.state.ingredientType}</Text>
+                                    </TouchableOpacity>
+                            :                       
+                                <Picker
+                                    style = {appStyle.pickerStyle}
+                                    mode = 'dropdown'
+                                    dropdownIconColor = {Colors.white}
+                                    selectedValue = {this.state.ingredientType}
+                                    onValueChange = {(itemValue, itemIndex) => this.setState({ingredientType: itemValue})}>
+                                    {this.renderIngredientTypesPickerItems(this.state.ingredientTypesAvailables)}
+                                </Picker>
+                        }
                     </View>
                 </View>
                 <View style = {{flexDirection: 'row', alignItems: 'center', marginTop: Dimens.medium}}>
-                    <Text style = {appStyle.cardViewText}>Calories: </Text>
-                    <View style = {{flex: 1}}>                                
+                    <View style = {{flex: 1}}>
+                        <Text style = {appStyle.cardViewText}>Calories: </Text>
+                    </View>
+                    
+                    <View style = {{flex: 2}}>                                
                         <TextInput 
                             ref= {ingredientCaloriesInput => { this.ingredientCaloriesInput = ingredientCaloriesInput }}  
                             style = {appStyle.inputText}
@@ -452,15 +548,17 @@ export default class Home extends React.Component {
 
     render() {
         return(
-            <KeyboardAwareScrollView> 
-                {this.state.showNewIngredientForm ?
-                    this.renderNewIngredientForm()
-                : 
-                    this.renderNewRecipeForm()
-                } 
-                <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
-                    acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
-            </KeyboardAwareScrollView>
+            <SafeAreaView>
+                <KeyboardAwareScrollView> 
+                    {this.state.showNewIngredientForm ?
+                        this.renderNewIngredientForm()
+                    : 
+                        this.renderNewRecipeForm()
+                    } 
+                    <CustomDialog visible = {this.state.showDialog} title = {this.state.titleDialog} message = {this.state.messageDialog}
+                        acceptHandleAction = {this.state.acceptHandleAction} cancelHandleAction = {this.state.cancelHandleAction}/>
+                </KeyboardAwareScrollView>  
+            </SafeAreaView> 
         )
     }
 }
@@ -475,6 +573,10 @@ const appStyle = StyleSheet.create({
     borderRadius: Dimens.small,
     padding: Dimens.small,
     backgroundColor: Colors.primaryColor
+  },
+  cardViewTextContainer: {
+    height: Dimens.big,
+    justifyContent: 'center'
   },
   cardViewText: {
     color: Colors.white
@@ -491,7 +593,9 @@ const appStyle = StyleSheet.create({
     color: Colors.primaryColor,
     backgroundColor: Colors.white,
     marginLeft: Dimens.small,
-    borderRadius: Dimens.small
+    borderRadius: Dimens.small,
+    paddingLeft: Dimens.tiny,
+    height: Dimens.big
   },
   pickerStyle: {
     color: Colors.white,
