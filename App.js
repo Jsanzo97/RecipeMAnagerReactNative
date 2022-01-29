@@ -5,7 +5,6 @@ import Home from './Home/Home'
 import NewRecipe from './NewRecipe/NewRecipe'
 import CloseSession from './CloseSession/CloseSession'
 import {StatusBar, Image, Text} from 'react-native'
-import Icon from 'react-native-vector-icons/dist/FontAwesome'
 import {NavigationContainer} from '@react-navigation/native'
 import {createStackNavigator} from '@react-navigation/stack'
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs'
@@ -104,10 +103,9 @@ const TabNavigatorComponent = () => {
 export default class App extends React.Component {
 
   render() {
-
     return (
       <NavigationContainer>
-        <StatusBar backgroundColor = {Colors.primaryColorDark} barStyle = 'light-content'/>
+        <StatusBar backgroundColor = {Colors.primaryColorDark} barStyle = 'dark-content'/>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name = {Strings.loginScreenName} component = {Login} />
           <Stack.Screen name = {Strings.tabBarNavigatorName} component = {TabNavigatorComponent} />
