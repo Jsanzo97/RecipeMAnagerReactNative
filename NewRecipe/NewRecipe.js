@@ -330,10 +330,10 @@ export default class Home extends React.Component {
                     <View style = {{flex: 2}}>
                         <TextInput  
                             ref= {recipeNameInput => { this.recipeNameInput = recipeNameInput }} 
-                            style = {appStyle.inputText}
+                            style = {Platform.OS == "ios" ? appStyle.iosInputText : appStyle.inputText}
                             placeholder = 'Recipe name'
                             value = {this.state.recipeName} 
-                            placeholderTePxtColor = {Colors.primaryColor}
+                            placeholderTextColor = {Colors.primaryColor}
                             onChangeText = {text => this.setState({recipeName: text})}
                         />
                     </View>
@@ -372,7 +372,7 @@ export default class Home extends React.Component {
                     <View style = {{flex: 2}}>                                
                         <TextInput  
                             ref= {recipeDurationInput => { this.recipeDurationInput = recipeDurationInput }} 
-                            style = {appStyle.inputText}
+                            style = {Platform.OS == "ios" ? appStyle.iosInputText : appStyle.inputText}
                             keyboardType='numeric'
                             placeholder = 'Duration'
                             value = {this.state.recipeDuration} 
@@ -451,7 +451,7 @@ export default class Home extends React.Component {
                     <View style = {{flex: 2}}>                                
                         <TextInput  
                             ref= {recipeDescriptionInput => { this.recipeDescriptionInput = recipeDescriptionInput }} 
-                            style = {appStyle.inputText}
+                            style = {Platform.OS == "ios" ? appStyle.iosInputText : appStyle.inputText}
                             placeholder = 'Description'
                             value = {this.state.recipeDescription}
                             placeholderTextColor = {Colors.primaryColor}
@@ -485,7 +485,7 @@ export default class Home extends React.Component {
                     <View style = {{flex: 2}}>
                         <TextInput 
                             ref= {ingredientNameInput => { this.ingredientNameInput = ingredientNameInput }} 
-                            style = {appStyle.inputText}
+                            style = {Platform.OS == "ios" ? appStyle.iosInputText : appStyle.inputText}
                             placeholder = 'Ingredient name' 
                             placeholderTextColor = {Colors.primaryColor}
                             onChangeText = {text => this.setState({ingredientName: text})}
@@ -522,7 +522,7 @@ export default class Home extends React.Component {
                     <View style = {{flex: 2}}>                                
                         <TextInput 
                             ref= {ingredientCaloriesInput => { this.ingredientCaloriesInput = ingredientCaloriesInput }}  
-                            style = {appStyle.inputText}
+                            style = {Platform.OS == "ios" ? appStyle.iosInputText : appStyle.inputText}
                             keyboardType='numeric'
                             placeholder = 'Calories' 
                             placeholderTextColor = {Colors.primaryColor}
@@ -563,6 +563,14 @@ export default class Home extends React.Component {
     }
 }
 
+const inputTextStyle = {
+    color: Colors.primaryColor,
+    backgroundColor: Colors.white,
+    marginLeft: Dimens.small,
+    borderRadius: Dimens.small,
+    paddingLeft: Dimens.tiny
+}
+
 const appStyle = StyleSheet.create({
   cardView: {
     elevation: Dimens.tiny,
@@ -590,11 +598,10 @@ const appStyle = StyleSheet.create({
     justifyContent: 'center'
   },
   inputText: {
-    color: Colors.primaryColor,
-    backgroundColor: Colors.white,
-    marginLeft: Dimens.small,
-    borderRadius: Dimens.small,
-    paddingLeft: Dimens.tiny,
+    ...inputTextStyle
+  },
+  iosInputText: {
+    ...inputTextStyle,
     height: Dimens.big
   },
   pickerStyle: {

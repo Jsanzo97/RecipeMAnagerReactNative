@@ -105,7 +105,7 @@ export default class App extends React.Component {
   render() {
     return (
       <NavigationContainer>
-        <StatusBar backgroundColor = {Colors.primaryColorDark} barStyle = 'dark-content'/>
+        <StatusBar backgroundColor = {Colors.primaryColorDark} barStyle = {Platform.OS == "ios" ? 'dark-content' : 'light-content'}/>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name = {Strings.loginScreenName} component = {Login} />
           <Stack.Screen name = {Strings.tabBarNavigatorName} component = {TabNavigatorComponent} />
