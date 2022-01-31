@@ -1,0 +1,6 @@
+module Pods_RecipeManagerApp_RecipeManagerAppTests {
+  umbrella header "Pods-RecipeManagerApp-RecipeManagerAppTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
