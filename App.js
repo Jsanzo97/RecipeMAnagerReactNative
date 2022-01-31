@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler'
 import React from 'react'
 import Login from './Login/Login'
 import Home from './Home/Home'
